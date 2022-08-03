@@ -11,4 +11,4 @@ def test_search_in_ya(browser):
     page.open()
     assert page.header_is_exist(), 'Отсутствует header'
     assert page.footer_is_exist(), 'Отсутствует footer'
-
+    assert page.all_links_code_200(), 'Не все ссылки вернули код 200'

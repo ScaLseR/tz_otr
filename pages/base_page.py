@@ -1,5 +1,6 @@
 """Base Page Module"""
 from selenium.common.exceptions import NoSuchElementException
+from requests import request
 
 
 class BasePage:
@@ -20,6 +21,18 @@ class BasePage:
         except NoSuchElementException:
             return False
         return True
+
+    def find_elements(self, how, what):
+        """finds the link of the first element in the search results"""
+        elements = self.browser.find_elements(how, what)
+        return elements
+
+    def check_link_code(self, link):
+        """check link for code 200"""
+        response = request(method='get', url=self.url)
+        if response.status_code == 200:
+            return True
+        return False
 
     def go_to_new_window(self):
         """go to new window in browser"""
