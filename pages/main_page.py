@@ -5,7 +5,8 @@ from pages.locators import MainPageLocators
 
 class MainPage(BasePage):
     """class for work with main page"""
-    _links = []
+
+    links = []
 
     def __init__(self, *args, **kwargs):
         super(MainPage, self).__init__(*args, **kwargs)
@@ -21,19 +22,21 @@ class MainPage(BasePage):
     def all_links_code_200(self):
         """check all links for status code 200"""
         self.get_all_links()
-        count = 0
-        for link in self._links:
-            if self.check_link_code(link):
-                count += 1
-        print('count== ', count)
-        if count == len(self._links):
-            return True
-        return False
+        for link in MainPage.links:
+            self.check_link_code(link)
 
     def get_all_links(self):
         """gets all links from the page"""
+        self.scroll_page()
+        temp_links = []
         elements = self.find_elements(*MainPageLocators.LINK)
         for elem in elements:
-            self._links.append(elem.get_attribute("href"))
-        temp_set = set(self._links)
-        self._links = list(temp_set)
+            temp_links.append(elem.get_attribute("href"))
+        temp_set = set(temp_links)
+        MainPage.links = list(temp_set)
+
+    def all_links_url_check(self):
+        """check link and url in browser"""
+        #self.get_all_links()
+        for link in MainPage.links:
+            self.check_open_page(link)

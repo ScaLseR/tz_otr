@@ -1,18 +1,23 @@
 """Base Page Module"""
 from selenium.common.exceptions import NoSuchElementException
-from requests import request
+from time import sleep
+import requests
+import logging
 
 
 class BasePage:
     """base class for all pages"""
-    def __init__(self, browser, url, timeout=10):
+    def __init__(self, browser, timeout=10):
         self.browser = browser
-        self.url = url
         self.browser.implicitly_wait(timeout)
 
-    def open(self):
+    def open(self, link):
         """opens the page"""
-        self.browser.get(self.url)
+        self.browser.get(link)
+
+    def close(self):
+        """close the page"""
+        self.browser.close()
 
     def is_element_present(self, how, what):
         """finds an element on the page"""
@@ -27,12 +32,25 @@ class BasePage:
         elements = self.browser.find_elements(how, what)
         return elements
 
-    def check_link_code(self, link):
+    @staticmethod
+    def check_link_code(link):
         """check link for code 200"""
-        response = request(method='get', url=self.url)
-        if response.status_code == 200:
-            return True
-        return False
+        try:
+            _ = requests.request(method='get', url=link)
+        except requests.exceptions.ConnectionError as cne:
+            print(link, ' Error Connecting: ', cne)
+        except requests.exceptions.Timeout as toe:
+            print(link, ' Timeout Error: ', toe)
+
+    def check_open_page(self, link):
+        """checking opened pdge url """
+        try:
+            self.open(link)
+            br_url = self.get_page_url()
+            if link != br_url:
+                print(link, 'открывается другая страница -> ', br_url)
+        except:
+            pass
 
     def go_to_new_window(self):
         """go to new window in browser"""
@@ -42,3 +60,9 @@ class BasePage:
     def get_page_url(self):
         """get current url"""
         return self.browser.current_url
+
+    def scroll_page(self):
+        """scroll page by steps"""
+        for i in range(6):
+            self.browser.execute_script("scrollBy(0,+1000);")
+            sleep(0.5)

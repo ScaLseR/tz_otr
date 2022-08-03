@@ -7,8 +7,9 @@ _URL = 'https://www.mos.ru/'
 
 def test_search_in_ya(browser):
     """test case mos"""
-    page = MainPage(browser, _URL)
-    page.open()
+    page = MainPage(browser)
+    page.open(_URL)
     assert page.header_is_exist(), 'Отсутствует header'
     assert page.footer_is_exist(), 'Отсутствует footer'
-    assert page.all_links_code_200(), 'Не все ссылки вернули код 200'
+    page.all_links_code_200()
+    page.all_links_url_check()
