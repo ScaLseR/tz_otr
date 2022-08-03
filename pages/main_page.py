@@ -33,10 +33,11 @@ class MainPage(BasePage):
         for elem in elements:
             temp_links.append(elem.get_attribute("href"))
         temp_set = set(temp_links)
+        print('Ссылок всего: ', len(temp_links))
         MainPage.links = list(temp_set)
+        print('Уникальных ссылок: ', len(MainPage.links))
 
     def all_links_url_check(self):
         """check link and url in browser"""
-        #self.get_all_links()
         for link in MainPage.links:
             self.check_open_page(link)

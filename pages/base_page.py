@@ -1,8 +1,14 @@
 """Base Page Module"""
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from time import sleep
 import requests
 import logging
+
+logger = logging.getLogger('spam_application')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('test.log')
+fh.setLevel(logging.WARNING)
+logger.addHandler(fh)
 
 
 class BasePage:
@@ -38,9 +44,9 @@ class BasePage:
         try:
             _ = requests.request(method='get', url=link)
         except requests.exceptions.ConnectionError as cne:
-            print(link, ' Error Connecting: ', cne)
+            logging.error(cne, exc_info=True)
         except requests.exceptions.Timeout as toe:
-            print(link, ' Timeout Error: ', toe)
+            logging.error(toe, exc_info=True)
 
     def check_open_page(self, link):
         """checking opened pdge url """
@@ -48,9 +54,10 @@ class BasePage:
             self.open(link)
             br_url = self.get_page_url()
             if link != br_url:
+                logger.warning(link + 'открывается другая страница -> ' + br_url)
                 print(link, 'открывается другая страница -> ', br_url)
-        except:
-            pass
+        except WebDriverException as wde:
+            logging.error(wde, exc_info=True)
 
     def go_to_new_window(self):
         """go to new window in browser"""
