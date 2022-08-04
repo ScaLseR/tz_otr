@@ -5,7 +5,7 @@ from pages.main_page import MainPage
 _URL = 'https://www.mos.ru/'
 
 
-def test_search_in_ya(browser):
+def test_search_and_check_mos(browser):
     """test case mos"""
     page = MainPage(browser)
     page.open(_URL)

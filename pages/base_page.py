@@ -4,11 +4,13 @@ from time import sleep
 import requests
 import logging
 
-logger = logging.getLogger('spam_application')
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('test.log')
-fh.setLevel(logging.WARNING)
-logger.addHandler(fh)
+
+logger = logging.getLogger(__name__)
+formatter = logging.Formatter("{asctime}:{levelname}:{name}:{message}", style="{")
+file_handler = logging.FileHandler("test.log")
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.DEBUG)
+logger.addHandler(file_handler)
 
 
 class BasePage:
@@ -20,10 +22,6 @@ class BasePage:
     def open(self, link):
         """opens the page"""
         self.browser.get(link)
-
-    def close(self):
-        """close the page"""
-        self.browser.close()
 
     def is_element_present(self, how, what):
         """finds an element on the page"""
@@ -38,31 +36,29 @@ class BasePage:
         elements = self.browser.find_elements(how, what)
         return elements
 
-    @staticmethod
-    def check_link_code(link):
+    def check_link_code(self, link):
         """check link for code 200"""
         try:
             _ = requests.request(method='get', url=link)
-        except requests.exceptions.ConnectionError as cne:
-            logging.error(cne, exc_info=True)
-        except requests.exceptions.Timeout as toe:
-            logging.error(toe, exc_info=True)
+        except requests.exceptions.ConnectionError:
+            text = 'ConnectionError -> ' + link
+            self.write_in_log('err', text)
+        except requests.exceptions.Timeout:
+            text = 'TimeoutError -> ' + link
+            self.write_in_log('err', text)
 
     def check_open_page(self, link):
-        """checking opened pdge url """
+        """checking opened page url """
         try:
             self.open(link)
             br_url = self.get_page_url()
             if link != br_url:
-                logger.warning(link + 'открывается другая страница -> ' + br_url)
+                text = link + ' открывается другая страница -> ' + br_url
+                self.write_in_log('wrn', text)
                 print(link, 'открывается другая страница -> ', br_url)
-        except WebDriverException as wde:
-            logging.error(wde, exc_info=True)
-
-    def go_to_new_window(self):
-        """go to new window in browser"""
-        new_window = self.browser.window_handles[1]
-        self.browser.switch_to.window(new_window)
+        except WebDriverException:
+            text = 'WebDriverException -> ' + link
+            self.write_in_log('err', text)
 
     def get_page_url(self):
         """get current url"""
@@ -73,3 +69,11 @@ class BasePage:
         for i in range(6):
             self.browser.execute_script("scrollBy(0,+1000);")
             sleep(0.5)
+
+    @staticmethod
+    def write_in_log(lvl, text):
+        """write text to log"""
+        if lvl == 'wrn':
+            logger.warning(text)
+        if lvl == 'err':
+            logger.error(text)
