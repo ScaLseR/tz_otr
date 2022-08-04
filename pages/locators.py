@@ -7,4 +7,3 @@ class MainPageLocators:
     HEADER = (By.ID, 'mos-header')
     FOOTER = (By.ID, 'mos_footer')
     LINK = (By.XPATH, '//a[@href]')
-

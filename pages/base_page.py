@@ -55,7 +55,6 @@ class BasePage:
             if link != br_url:
                 text = link + ' открывается другая страница -> ' + br_url
                 self.write_in_log('wrn', text)
-                print(link, 'открывается другая страница -> ', br_url)
         except WebDriverException:
             text = 'WebDriverException -> ' + link
             self.write_in_log('err', text)
