@@ -54,7 +54,7 @@ class BasePage:
         try:
             self.open(link)
             br_url = self.get_page_url()
-            if br_url not in link:
+            if link not in br_url:
                 text = link + ' открывается другая страница -> ' + br_url
                 self.write_in_log('wrn', text)
         except WebDriverException:
