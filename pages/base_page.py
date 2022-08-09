@@ -23,13 +23,12 @@ class BasePage:
         """opens the page"""
         self.browser.get(link)
 
-    def is_element_present(self, how, what):
-        """finds an element on the page"""
-        try:
-            self.browser.find_element(how, what)
-        except NoSuchElementException:
-            return False
-        return True
+    def is_element_displayed(self, how, what):
+        """is elements displayed"""
+        elem = self.browser.find_element(how, what)
+        if elem.is_displayed():
+            return True
+        return False
 
     def find_elements(self, how, what):
         """finds the link of the first element in the search results"""
@@ -39,7 +38,10 @@ class BasePage:
     def check_link_code(self, link):
         """check link for code 200"""
         try:
-            _ = requests.request(method='get', url=link)
+            response = requests.request(method='get', url=link)
+            if response.status_code != 200:
+                text = link + '--> status code ' + str(response.status_code)
+                self.write_in_log('wrn', text)
         except requests.exceptions.ConnectionError:
             text = 'ConnectionError -> ' + link
             self.write_in_log('err', text)
@@ -52,7 +54,7 @@ class BasePage:
         try:
             self.open(link)
             br_url = self.get_page_url()
-            if link != br_url:
+            if br_url not in link:
                 text = link + ' открывается другая страница -> ' + br_url
                 self.write_in_log('wrn', text)
         except WebDriverException:

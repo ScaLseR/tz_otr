@@ -13,11 +13,11 @@ class MainPage(BasePage):
 
     def header_is_exist(self):
         """find header"""
-        return self.is_element_present(*MainPageLocators.HEADER)
+        return self.is_element_displayed(*MainPageLocators.HEADER)
 
     def footer_is_exist(self):
         """find footer"""
-        return self.is_element_present(*MainPageLocators.FOOTER)
+        return self.is_element_displayed(*MainPageLocators.FOOTER)
 
     def all_links_code_200(self):
         """check all links for status code 200"""
