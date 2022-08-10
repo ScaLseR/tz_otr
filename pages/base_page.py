@@ -2,7 +2,6 @@
 import requests
 import logging
 import allure
-import datetime
 from allure_commons.types import AttachmentType
 from selenium.common.exceptions import WebDriverException
 from time import sleep
