@@ -9,6 +9,5 @@ def browser():
     """default browser -> GoogleChrome"""
     s = Service('C:/chromedriver/chromedriver.exe')
     browser = webdriver.Chrome(service=s)
-
     yield browser
     browser.quit()
