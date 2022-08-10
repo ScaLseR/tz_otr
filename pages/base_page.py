@@ -1,8 +1,11 @@
 """Base Page Module"""
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from time import sleep
 import requests
 import logging
+import allure
+import datetime
+from allure_commons.types import AttachmentType
+from selenium.common.exceptions import WebDriverException
+from time import sleep
 
 
 logger = logging.getLogger(__name__)
@@ -42,12 +45,22 @@ class BasePage:
             if response.status_code != 200:
                 text = link + '--> status code ' + str(response.status_code)
                 self.write_in_log('wrn', text)
+                with allure.step('Screenshot'):
+                    allure.attach(self.browser.get_screenshot_as_png(), name=text, attachment_type=AttachmentType.PNG)
         except requests.exceptions.ConnectionError:
             text = 'ConnectionError -> ' + link
             self.write_in_log('err', text)
+            with allure.step('Screenshot'):
+                allure.attach(self.browser.get_screenshot_as_png(),
+                              name=datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') + ' ConnectionError ',
+                              attachment_type=AttachmentType.PNG)
         except requests.exceptions.Timeout:
             text = 'TimeoutError -> ' + link
             self.write_in_log('err', text)
+            with allure.step('Screenshot'):
+                allure.attach(self.browser.get_screenshot_as_png(),
+                              name=datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') + ' TimeoutError ',
+                              attachment_type=AttachmentType.PNG)
 
     def check_open_page(self, link):
         """checking opened page url """
@@ -57,9 +70,15 @@ class BasePage:
             if link not in br_url:
                 text = link + ' открывается другая страница -> ' + br_url
                 self.write_in_log('wrn', text)
+                with allure.step('Screenshot'):
+                    allure.attach(self.browser.get_screenshot_as_png(), name=text, attachment_type=AttachmentType.PNG)
         except WebDriverException:
             text = 'WebDriverException -> ' + link
             self.write_in_log('err', text)
+            with allure.step('Screenshot'):
+                allure.attach(self.browser.get_screenshot_as_png(),
+                              name=datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') + ' WebDriverException ',
+                              attachment_type=AttachmentType.PNG)
 
     def get_page_url(self):
         """get current url"""
